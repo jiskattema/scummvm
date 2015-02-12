@@ -702,8 +702,8 @@ public:
         return _screen;
 	}
 
-#define ANALOG_VALUE_X_ADD 8
-#define ANALOG_VALUE_Y_ADD 8
+#define ANALOG_VALUE_X_ADD 4
+#define ANALOG_VALUE_Y_ADD 4
 #define ANALOG_THRESHOLD 0x1FFF
 
 	void processMouse(retro_input_state_t aCallback)
@@ -717,6 +717,8 @@ public:
             {Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP},
             {Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP}
         };
+        static int joystickStateX = 0, joystickStateY = 0,
+            joystickStateL = 0, joystickStateR = 0, joystickStateL2 = 0, joystickStateR2 = 0;
 
         down = false;
         do_joystick = false;
@@ -794,6 +796,81 @@ public:
             Common::Event ev;
             ev.type = Common::EVENT_MAINMENU;
             _events.push_back(ev);
+        }
+
+        if (aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X) != joystickStateX )
+        {
+            Common::Event ev;
+
+            ev.kbd.keycode = Common::KEYCODE_PERIOD;
+            ev.kbd.ascii = '.'; // Period skips the current line of text in some games
+
+            if (joystickStateX) ev.type = Common::EVENT_KEYUP; else ev.type = Common::EVENT_KEYDOWN;
+
+            _events.push_back(ev);
+            joystickStateX = joystickStateX ? 0 : 1;
+        }
+        if (aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y) != joystickStateY )
+        {
+            Common::Event ev;
+
+            ev.kbd.keycode = Common::KEYCODE_ESCAPE;
+            ev.kbd.ascii = 27; // Escape skips cut-scenes in some games
+
+            if (joystickStateY) ev.type = Common::EVENT_KEYUP; else ev.type = Common::EVENT_KEYDOWN;
+
+            _events.push_back(ev);
+            joystickStateY = joystickStateY ? 0 : 1;
+        }
+        if (aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L) != joystickStateL )
+        {
+            Common::Event ev;
+
+            ev.kbd.keycode = Common::KEYCODE_t;
+            ev.kbd.ascii = 't'; // Toggles between speech and subtitles in some games
+
+            if (joystickStateL) ev.type = Common::EVENT_KEYUP; else ev.type = Common::EVENT_KEYDOWN;
+
+            _events.push_back(ev);
+            joystickStateL = joystickStateL ? 0 : 1;
+        }
+        if (aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R) != joystickStateR )
+        {
+            Common::Event ev;
+
+            ev.kbd.keycode = Common::KEYCODE_v;
+            ev.kbd.ascii = 'v'; // Toggles between speech and subtitles in some games
+
+            if (joystickStateL) ev.type = Common::EVENT_KEYUP; else ev.type = Common::EVENT_KEYDOWN;
+
+            _events.push_back(ev);
+            joystickStateR = joystickStateR ? 0 : 1;
+        }
+        if (aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2) != joystickStateL2 )
+        {
+            Common::Event ev;
+
+            ev.kbd.keycode = Common::KEYCODE_f;
+            ev.kbd.flags = Common::KBD_CTRL;
+            ev.kbd.ascii = 'f'; // Ctrl-F toggles fast mode
+
+            if (joystickStateL) ev.type = Common::EVENT_KEYUP; else ev.type = Common::EVENT_KEYDOWN;
+
+            _events.push_back(ev);
+            joystickStateL2 = joystickStateL2 ? 0 : 1;
+        }
+        if (aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2) != joystickStateR2 )
+        {
+            Common::Event ev;
+
+            ev.kbd.keycode = Common::KEYCODE_t;
+            ev.kbd.flags = Common::KBD_CTRL;
+            ev.kbd.ascii = 't'; // Toggles between speech and subtitles in some games
+
+            if (joystickStateL) ev.type = Common::EVENT_KEYUP; else ev.type = Common::EVENT_KEYDOWN;
+
+            _events.push_back(ev);
+            joystickStateR2 = joystickStateR2 ? 0 : 1;
         }
 
         if (do_joystick)
@@ -925,3 +1002,4 @@ void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key
 {
    ((OSystem_RETRO*)g_system)->processKeyEvent(down, keycode, character, key_modifiers);
 }
+
