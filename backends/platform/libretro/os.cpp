@@ -863,9 +863,8 @@ public:
         {
             Common::Event ev;
 
-            ev.kbd.keycode = Common::KEYCODE_t;
-            ev.kbd.flags = Common::KBD_CTRL;
-            ev.kbd.ascii = 't'; // Toggles between speech and subtitles in some games
+            ev.kbd.keycode = Common::KEYCODE_RETURN;
+            ev.kbd.ascii = 13; // Send enter
 
             if (joystickStateL) ev.type = Common::EVENT_KEYUP; else ev.type = Common::EVENT_KEYDOWN;
 
